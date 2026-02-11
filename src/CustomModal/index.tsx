@@ -28,6 +28,10 @@ export type CustomModalProps = {
   slideDirection?: 'up' | 'top' | 'left' | 'right' | 'down';
   /** Custom styles to apply to the modal content. */
   customContentStyle?: StyleProp<ViewStyle>;
+  /** Callback fired after the open animation starts. */
+  onOpen?: () => void;
+  /** Callback fired after the close animation completes. */
+  onClose?: () => void;
 };
 
 type directionsDurationTypes = {
@@ -75,6 +79,8 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
       backgroundColor = 'white',
       slideDirection = 'up',
       customContentStyle,
+      onOpen,
+      onClose,
     },
     ref,
   ) => {
@@ -87,8 +93,10 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
         toValue: 1,
         duration: durationAnimationsAtOpen[slideDirection],
         useNativeDriver: true,
-      }).start();
-    }, [animation, slideDirection]);
+      }).start(() => {
+        onOpen?.();
+      });
+    }, [animation, slideDirection, onOpen]);
 
     const handleAnimationAtCloseModal = useCallback(() => {
       Animated.timing(animation, {
@@ -97,8 +105,9 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
         useNativeDriver: true,
       }).start(() => {
         setVisible(false);
+        onClose?.();
       });
-    }, [animation, slideDirection]);
+    }, [animation, slideDirection, onClose]);
 
     const open = useCallback(() => {
       setVisible(true);
