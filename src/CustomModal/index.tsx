@@ -17,13 +17,19 @@ import {
   ColorValue,
 } from 'react-native';
 
-type CustomModalProps = {
+export type CustomModalProps = {
+  /** The content to be rendered inside the modal. */
   children?: ReactNode;
+  /** Whether the modal should close when the user clicks outside of it. */
   closeOutside?: boolean;
+  /** The background color of the modal content area. */
   backgroundColor?: ColorValue;
+  /** The direction from which the modal should slide in. */
   slideDirection?: 'up' | 'top' | 'left' | 'right' | 'down';
+  /** Custom styles to apply to the modal content. */
   customContentStyle?: StyleProp<ViewStyle>;
 };
+
 type directionsDurationTypes = {
   left: number;
   right: number;
@@ -45,23 +51,21 @@ export type RefModalObject = {
   close: () => void;
 };
 
-/**
- * A customizable modal component for React Native.
- * @typedef {object} CustomModalProps
- * @property {ReactNode} [children] - The content to be rendered inside the modal.
- * @property {boolean} [closeOutside=true] - Whether the modal should close when the user clicks outside of it.
- * @property {ColorTypes} [backgroundColor='white'] - The background color of the modal.
- * @property {'up' | 'left'} [slideDirection='up'] - The direction from which the modal should slide in.
- * @property {StyleProp<ViewStyle>} [customContentStyle] - Custom styles to apply to the modal content.
- *
- * @typedef {object} RefModalObject
- * @property {() => void} open - A function that opens the modal.
- * @property {() => void} close - A function that closes the modal.
- *
- * @param {Ref<RefModalObject>} ref - The ref object that can be used to access the modal's open and close functions.
- * @param {CustomModalProps} props - The props that configure the behavior and appearance of the modal.
- * @returns {JSX.Element} - The modal component.
- */
+const durationAnimationsAtOpen: directionsDurationTypes = {
+  left: 300,
+  right: 300,
+  down: 500,
+  up: 500,
+  top: 500,
+};
+
+const durationAnimationsAtClose: directionsDurationTypes = {
+  left: 200,
+  right: 200,
+  down: 360,
+  up: 360,
+  top: 360,
+};
 
 const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
   (
@@ -84,7 +88,7 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
         duration: durationAnimationsAtOpen[slideDirection],
         useNativeDriver: true,
       }).start();
-    }, [animation]);
+    }, [animation, slideDirection]);
 
     const handleAnimationAtCloseModal = useCallback(() => {
       Animated.timing(animation, {
@@ -109,22 +113,6 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
       open,
       close,
     }));
-
-    const durationAnimationsAtOpen: directionsDurationTypes = {
-      left: 300,
-      right: 300,
-      down: 500,
-      up: 500,
-      top: 500,
-    };
-
-    const durationAnimationsAtClose: directionsDurationTypes = {
-      left: 200,
-      right: 200,
-      down: 360,
-      up: 360,
-      top: 360,
-    };
 
     const slideUp: Animated.WithAnimatedValue<ViewStyle> = {
       transform: [
