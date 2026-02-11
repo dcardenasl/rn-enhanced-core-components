@@ -41,15 +41,12 @@ describe('CustomButton', () => {
       </CustomButton>,
     );
 
-    // Check if the ActivityIndicator is present
     const activityIndicator = getByTestId('loader');
     expect(activityIndicator).toBeTruthy();
 
-    // Check if the button text is not present
     const buttonText = queryByText('Test Button');
     expect(buttonText).toBeNull();
 
-    // Since the button is in a loading state, the onPress should not be called
     if (buttonText) {
       fireEvent.press(buttonText);
     }
@@ -65,5 +62,109 @@ describe('CustomButton', () => {
     );
     fireEvent.press(getByText('Test Button'));
     expect(onPressMock).toHaveBeenCalledTimes(0);
+  });
+
+  test('applies style prop', () => {
+    const {toJSON} = render(
+      <CustomButton style={{borderRadius: 10}}>
+        <Text>Styled</Text>
+      </CustomButton>,
+    );
+    const tree = toJSON();
+    const flatStyle = Array.isArray(tree?.props.style)
+      ? Object.assign({}, ...tree.props.style)
+      : tree?.props.style;
+    expect(flatStyle.borderRadius).toBe(10);
+  });
+
+  test('applies backgroundColor prop', () => {
+    const {toJSON} = render(
+      <CustomButton backgroundColor="blue">
+        <Text>Blue</Text>
+      </CustomButton>,
+    );
+    const tree = toJSON();
+    const flatStyle = Array.isArray(tree?.props.style)
+      ? Object.assign({}, ...tree.props.style)
+      : tree?.props.style;
+    expect(flatStyle.backgroundColor).toBe('blue');
+  });
+
+  test('applies grey background when disabled', () => {
+    const {toJSON} = render(
+      <CustomButton disabled backgroundColor="blue">
+        <Text>Disabled</Text>
+      </CustomButton>,
+    );
+    const tree = toJSON();
+    const flatStyle = Array.isArray(tree?.props.style)
+      ? Object.assign({}, ...tree.props.style)
+      : tree?.props.style;
+    expect(flatStyle.backgroundColor).toBe('grey');
+  });
+
+  test('renders without onPress (noop default)', () => {
+    const {getByText} = render(
+      <CustomButton>
+        <Text>No Handler</Text>
+      </CustomButton>,
+    );
+    expect(() => fireEvent.press(getByText('No Handler'))).not.toThrow();
+  });
+
+  test('has accessibilityRole="button"', () => {
+    const {toJSON} = render(
+      <CustomButton>
+        <Text>A11y</Text>
+      </CustomButton>,
+    );
+    expect(toJSON()?.props.accessibilityRole).toBe('button');
+  });
+
+  test('sets accessibilityState.disabled when disabled', () => {
+    const {toJSON} = render(
+      <CustomButton disabled>
+        <Text>Disabled</Text>
+      </CustomButton>,
+    );
+    expect(toJSON()?.props.accessibilityState.disabled).toBe(true);
+  });
+
+  test('sets accessibilityState.busy when loading', () => {
+    const {toJSON} = render(
+      <CustomButton loading>
+        <Text>Loading</Text>
+      </CustomButton>,
+    );
+    expect(toJSON()?.props.accessibilityState.busy).toBe(true);
+  });
+
+  test('passes through accessibilityLabel', () => {
+    const {toJSON} = render(
+      <CustomButton accessibilityLabel="Submit form">
+        <Text>Submit</Text>
+      </CustomButton>,
+    );
+    expect(toJSON()?.props.accessibilityLabel).toBe('Submit form');
+  });
+
+  test('passes through accessibilityHint', () => {
+    const {toJSON} = render(
+      <CustomButton accessibilityHint="Submits the registration form">
+        <Text>Submit</Text>
+      </CustomButton>,
+    );
+    expect(toJSON()?.props.accessibilityHint).toBe(
+      'Submits the registration form',
+    );
+  });
+
+  test('passes through testID', () => {
+    const {getByTestId} = render(
+      <CustomButton testID="my-button">
+        <Text>Test</Text>
+      </CustomButton>,
+    );
+    expect(getByTestId('my-button')).toBeTruthy();
   });
 });
