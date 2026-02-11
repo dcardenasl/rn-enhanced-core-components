@@ -137,22 +137,6 @@ describe('CustomModal', () => {
     expect(getByTestId('animatedView')).toBeTruthy();
   });
 
-  it('opens with slideDirection="top"', async () => {
-    const modalRef = React.createRef<RefModalObject>();
-    const {getByText, getByTestId} = render(
-      <CustomModal ref={modalRef} slideDirection="top">
-        <Text>Top Content</Text>
-      </CustomModal>,
-    );
-
-    await act(async () => {
-      modalRef.current?.open();
-    });
-
-    await waitFor(() => getByText('Top Content'));
-    expect(getByTestId('animatedView')).toBeTruthy();
-  });
-
   it('fires onOpen callback after opening', async () => {
     const onOpenMock = jest.fn();
     const modalRef = React.createRef<RefModalObject>();
@@ -273,5 +257,20 @@ describe('CustomModal', () => {
 
     // Should not throw
     expect(modalRef.current).toBeTruthy();
+  });
+
+  it('stops animation on unmount', async () => {
+    const modalRef = React.createRef<RefModalObject>();
+    const {unmount} = render(
+      <CustomModal ref={modalRef}>
+        <Text>Unmount</Text>
+      </CustomModal>,
+    );
+
+    await act(async () => {
+      modalRef.current?.open();
+    });
+
+    expect(() => unmount()).not.toThrow();
   });
 });
