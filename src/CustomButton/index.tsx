@@ -3,30 +3,26 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   ViewStyle,
-  TextStyle,
   ColorValue,
+  StyleProp,
 } from 'react-native';
 
-interface CustomButtonProps {
+export interface CustomButtonProps {
+  /** The content to render inside the button. */
   children: ReactNode;
+  /** Function to execute when the button is pressed. */
   onPress?: () => void;
+  /** Whether the button should be disabled. */
   disabled?: boolean;
-  style?: ViewStyle | TextStyle;
+  /** Optional custom styles for the button container. */
+  style?: StyleProp<ViewStyle>;
+  /** Whether the button is in a loading state. */
   loading?: boolean;
+  /** Optional color for the button background. */
   backgroundColor?: ColorValue;
 }
 
-/**
- * Props for the CustomButton component.
- *
- * @typedef {object} CustomButtonProps
- * @property {ReactNode} children - The content to render inside the button.
- * @property {() => void} [onPress] - Function to execute when the button is pressed.
- * @property {boolean} [disabled] - Whether the button should be disabled.
- * @property {ViewStyle | TextStyle} [style] - Optional custom styles for the button container.
- * @property {boolean} [loading] - Whether the button is in a loading state.
- * @property {ColorTypes} [backgroundColor] - Optional color for the button background.
- */
+const noop = () => {};
 
 const CustomButton: FC<CustomButtonProps> = ({
   children,
@@ -34,7 +30,7 @@ const CustomButton: FC<CustomButtonProps> = ({
   disabled,
   loading,
   backgroundColor,
-  onPress = () => {},
+  onPress = noop,
 }) => {
   const btnStyle: ViewStyle = {
     flexDirection: 'row',
@@ -43,22 +39,22 @@ const CustomButton: FC<CustomButtonProps> = ({
     backgroundColor: disabled ? 'grey' : backgroundColor,
   };
 
-  const Loader = () => (
-    <ActivityIndicator
-      testID="loader"
-      animating={loading}
-      size="large"
-      color={'white'}
-    />
-  );
-
   return (
     <TouchableOpacity
       activeOpacity={0.6}
       disabled={disabled || loading}
       style={[btnStyle, style]}
       onPress={onPress}>
-      {loading ? <Loader /> : children}
+      {loading ? (
+        <ActivityIndicator
+          testID="loader"
+          animating={loading}
+          size="large"
+          color={'white'}
+        />
+      ) : (
+        children
+      )}
     </TouchableOpacity>
   );
 };
