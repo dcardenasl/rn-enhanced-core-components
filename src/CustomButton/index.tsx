@@ -20,6 +20,12 @@ export interface CustomButtonProps {
   loading?: boolean;
   /** Optional color for the button background. */
   backgroundColor?: ColorValue;
+  /** Accessibility label describing the button's purpose. */
+  accessibilityLabel?: string;
+  /** Accessibility hint providing additional context. */
+  accessibilityHint?: string;
+  /** Test identifier for end-to-end testing. */
+  testID?: string;
 }
 
 const noop = () => {};
@@ -31,6 +37,9 @@ const CustomButton: FC<CustomButtonProps> = ({
   loading,
   backgroundColor,
   onPress = noop,
+  accessibilityLabel,
+  accessibilityHint,
+  testID,
 }) => {
   const btnStyle: ViewStyle = {
     flexDirection: 'row',
@@ -44,7 +53,12 @@ const CustomButton: FC<CustomButtonProps> = ({
       activeOpacity={0.6}
       disabled={disabled || loading}
       style={[btnStyle, style]}
-      onPress={onPress}>
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityState={{disabled: !!disabled, busy: !!loading}}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
+      testID={testID}>
       {loading ? (
         <ActivityIndicator
           testID="loader"

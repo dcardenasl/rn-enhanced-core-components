@@ -32,6 +32,8 @@ export type CustomModalProps = {
   onOpen?: () => void;
   /** Callback fired after the close animation completes. */
   onClose?: () => void;
+  /** Accessibility label for the modal content area. */
+  accessibilityLabel?: string;
 };
 
 type directionsDurationTypes = {
@@ -81,6 +83,7 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
       customContentStyle,
       onOpen,
       onClose,
+      accessibilityLabel,
     },
     ref,
   ) => {
@@ -197,6 +200,7 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
         transparent={true}
         visible={visible}
         onRequestClose={close}
+        accessibilityViewIsModal={true}
         style={[stylesCustomModal.contentModal]}>
         <TouchableOpacity
           activeOpacity={1}
@@ -211,6 +215,7 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
                 bodyContentStyles,
                 customContentStyle,
               ]}
+              accessibilityLabel={accessibilityLabel}
               testID="animatedView">
               {children}
             </Animated.View>
