@@ -12,7 +12,7 @@ import {
 import CustomButton from './src/CustomButton';
 import CustomModal, {RefModalObject} from './src/CustomModal';
 
-function App(): JSX.Element {
+function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const refModal = useRef<RefModalObject>(null);
 
@@ -20,32 +20,35 @@ function App(): JSX.Element {
     backgroundColor: isDarkMode ? 'black' : 'white',
   };
 
-  console.log('new Render');
-
-  const _section = (): JSX.Element => (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <CustomButton
-        // disabled={true}
-        // loading={true}
-        style={styles.btn}
-        backgroundColor={'red'}
-        onPress={() => {
-          refModal.current?.open();
-        }}>
-        <Text style={styles.text}>Abrir Modal</Text>
-      </CustomButton>
-    </View>
-  );
-
-  const _modals = (): JSX.Element => (
-    <>
-      <CustomModal ref={refModal} slideDirection={'right'}>
+  return (
+    <SafeAreaView style={[styles.flex1, backgroundStyle]}>
+      <StatusBar
+        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        backgroundColor={backgroundStyle.backgroundColor}
+      />
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={backgroundStyle}
+        contentContainerStyle={styles.flex1}>
         <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+          style={[
+            styles.flex1,
+            {backgroundColor: isDarkMode ? 'black' : 'white'},
+          ]}>
+          <View style={styles.centered}>
+            <CustomButton
+              style={styles.btn}
+              backgroundColor={'red'}
+              onPress={() => {
+                refModal.current?.open();
+              }}>
+              <Text style={styles.text}>Abrir Modal</Text>
+            </CustomButton>
+          </View>
+        </View>
+      </ScrollView>
+      <CustomModal ref={refModal} slideDirection={'up'}>
+        <View style={styles.centered}>
           <CustomButton
             style={styles.btn}
             backgroundColor={'red'}
@@ -56,33 +59,19 @@ function App(): JSX.Element {
           </CustomButton>
         </View>
       </CustomModal>
-    </>
-  );
-
-  return (
-    <SafeAreaView style={[{flex: 1}, backgroundStyle]}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}
-        contentContainerStyle={{flex: 1}}>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: isDarkMode ? 'black' : 'white',
-          }}>
-          {_section()}
-        </View>
-      </ScrollView>
-      {_modals()}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  flex1: {
+    flex: 1,
+  },
+  centered: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   btn: {
     height: 50,
     width: '70%',
