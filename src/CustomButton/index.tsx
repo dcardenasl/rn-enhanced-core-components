@@ -1,7 +1,7 @@
-import React, {FC, ReactNode} from 'react';
+import React, {ReactNode} from 'react';
 import {
   ActivityIndicator,
-  TouchableOpacity,
+  Pressable,
   ViewStyle,
   ColorValue,
   StyleProp,
@@ -30,7 +30,7 @@ export interface CustomButtonProps {
 
 const noop = () => {};
 
-const CustomButton: FC<CustomButtonProps> = ({
+const CustomButton = ({
   children,
   style,
   disabled,
@@ -40,7 +40,7 @@ const CustomButton: FC<CustomButtonProps> = ({
   accessibilityLabel,
   accessibilityHint,
   testID,
-}) => {
+}: CustomButtonProps) => {
   const btnStyle: ViewStyle = {
     flexDirection: 'row',
     alignItems: 'center',
@@ -49,10 +49,9 @@ const CustomButton: FC<CustomButtonProps> = ({
   };
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.6}
+    <Pressable
       disabled={disabled || loading}
-      style={[btnStyle, style]}
+      style={({pressed}) => [btnStyle, pressed && {opacity: 0.6}, style]}
       onPress={onPress}
       accessibilityRole="button"
       accessibilityState={{disabled: !!disabled, busy: !!loading}}
@@ -69,7 +68,7 @@ const CustomButton: FC<CustomButtonProps> = ({
       ) : (
         children
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
